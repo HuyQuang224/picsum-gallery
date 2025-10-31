@@ -3,6 +3,8 @@ import { useLocation, useParams, Link } from 'react-router-dom';
 function PhotoPage() {
   const { id } = useParams();
   const { state: photo } = useLocation();
+
+  // Use the location state if present, otherwise fall back to basic data using the id
   const data = photo || { id, author: 'Unknown', title: 'Untitled' };
 
   return (
@@ -10,6 +12,7 @@ function PhotoPage() {
       <Link to="/photos" className="text-blue-500 underline">← Quay lại</Link>
 
       <div className="mt-6">
+        {/* Large display image; width/height chosen for good detail */}
         <img
           src={`https://picsum.photos/id/${data.id}/1200/800`}
           alt={data.author}

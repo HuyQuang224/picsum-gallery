@@ -5,6 +5,12 @@ import Loader from '../components/Loader';
 import ErrorBox from '../components/ErrorBox';
 import useInfiniteScroll from '../hooks/useInfiniteScroll';
 
+/*
+  PhotosPage.jsx
+  - Displays a paginated, infinite-scrolling grid of photos.
+  - Uses `fetchPhotos` to load pages and `useInfiniteScroll` to detect when to load more.
+  - Error handling shows ErrorBox and a Retry button that reloads the page.
+*/
 function PhotosPage() {
   const [photos, setPhotos] = useState([]);
   const [page, setPage] = useState(1);
@@ -50,7 +56,6 @@ function PhotosPage() {
       {!loading && !hasMore && (
         <p className="text-center text-gray-500 mt-6">Không còn ảnh để hiển thị.</p>
       )}
-
       <div ref={loaderRef}></div>
     </div>
   );
