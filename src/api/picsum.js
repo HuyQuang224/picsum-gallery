@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://picsum.photos';
+const BASE_URL = 'https://picsum.photos/v2';
 
 /**
  * fetchPhotos
