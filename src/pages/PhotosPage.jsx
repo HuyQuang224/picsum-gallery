@@ -13,6 +13,7 @@ function PhotosPage() {
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef();
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
     let mounted = true; // Biến cờ để tránh cập nhật state sau khi component unmount
@@ -47,17 +48,31 @@ function PhotosPage() {
 
     // Cleanup function: ngăn cập nhật state sau khi unmount
     return () => { mounted = false; };
-  }, [page]); // Mỗi khi `page` thay đổi, effect sẽ chạy lại (tức là tải thêm dữ liệu mới)
+  }, [page, retry]); // Mỗi khi `page` hoặc `retry` thay đổi, effect sẽ chạy lại
 
   // useInfiniteScroll sẽ tự động tăng `page` khi người dùng cuộn gần cuối trang
-  useInfiniteScroll(loaderRef, hasMore, loading, () => setPage(p => p + 1));
+  // Tắt hành vi infinite-scroll khi đang có lỗi để tránh reload/tải lặp lại
+  useInfiniteScroll(loaderRef, hasMore && !error, loading, () => setPage(p => p + 1));
 
   return (
     <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6 text-center">Picsum Photo Gallery</h1>
 
       {/* Nếu có lỗi thì hiển thị ErrorBox và cung cấp nút thử lại */}
-      {error && <ErrorBox message={error} onRetry={() => window.location.reload()} />}
+      {error && (
+        <ErrorBox
+          message={error}
+          onRetry={() => {
+            // Retry cục bộ: xoá lỗi và reset về trang 1 để fetch lại từ đầu.
+            // Tránh dùng window.location.reload() để không gây flashing khi observer đang kích hoạt.
+            setError(null);
+            setPhotos([]);
+            setPage(1);
+            setHasMore(true);
+            setRetry(r => r + 1);
+          }}
+        />
+      )}
 
       {/* Hiển thị danh sách ảnh */}
       <PhotoGrid photos={photos} />
